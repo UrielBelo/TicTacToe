@@ -5,14 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo da Velha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Roboto:ital,wght@1,100&display=swap" rel="stylesheet">
     <style>
         *{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        h2{
+            text-align: center;
+            margin-top: 5vh;
+            font-size: 48px;
+            margin-bottom: 2vh;
+            font-family: 'Josefin Sans', sans-serif;
+        }
         #pageBody{
-            height: 100vh;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,9 +38,34 @@
             justify-content: center;
             align-items: center;
         }
+        #placar{
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5vh;
+        }
+        .score{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-left: 1.5vw;
+            margin-right: 1.5vw;
+            padding: 0.7em;
+            background-color: #EEE;
+            border: 1px solid black;
+            border-radius: 15px;
+        }
+        .score h4{
+            font-size: 64px;
+            margin-left: 1.5vw;
+            font-family: 'Roboto', sans-serif;
+        }
     </style>
 </head>
 <body>
+    <h2>Jogo da Velha</h2>
+    <div id="placar">
+        <div id="circlePoints" class="score"></div>
+        <div id="xPoints" class="score"></div>
+    </div>
     <div id="pageBody">
         <div id="gameWindow"></div>
     </div>

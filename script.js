@@ -1,4 +1,6 @@
 const $gameWindow = document.getElementById('gameWindow')
+const $circleScore = document.getElementById('circlePoints')
+const $xScore = document.getElementById('xPoints')
 
 const borderStroke = 2
 const bs = borderStroke
@@ -9,7 +11,8 @@ const gameLayout = [
 ]
 const winForms = [
     [1,4,7],[2,5,8],[3,6,9],
-    [1,2,3],[4,5,6],[7,8,9]
+    [1,2,3],[4,5,6],[7,8,9],
+    [1,5,9],[3,5,7]
 ]
 const xFigure = `
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="blue" viewBox="0 0 16 16">
@@ -24,7 +27,10 @@ const cFigure = `
 const lBlocks = []
 
 let currentTurn = 'x'
+let circlePoints = 0
+let xPoints = 0
 
+updatePlacar()
 
 for(var i=0; i < 9; i++){
     const gameBlock = document.createElement('div')
@@ -57,7 +63,15 @@ function click(blockID){
         }
 
         render()
-        // checkWin()
+        var winner = checkWin(['x','c'])
+        if(winner != undefined){
+            if(winner == 'c'){
+                circlePoints++
+            }else if(winner == 'x'){
+                xPoints++
+            }
+            updatePlacar()
+        }
     }
 }
 function render(){
@@ -75,4 +89,31 @@ function render(){
 
         el.innerHTML = currentFigure
     })
+}
+function checkWin(player){
+    var winner
+    player.forEach( (play) => {
+        var counter = 0
+        var win = false
+        winForms.forEach( (form) => {
+            if(lBlocks[form[0] - 1].mark == play){ counter++}
+            if(lBlocks[form[1] - 1].mark == play){ counter++}
+            if(lBlocks[form[2] - 1].mark == play){ counter++}
+            if(counter == 3){
+                win = true
+            }else{
+                counter = 0
+            }
+        })
+        if(win == true){
+            winner = play
+        }
+    })
+    return winner
+}
+function updatePlacar(){
+    $circleScore.innerHTML = ''
+    $xScore.innerHTML = ''
+    $circleScore.innerHTML = cFigure + `<h4>${circlePoints}</h4>`
+    $xScore.innerHTML = xFigure + `<h4>${xPoints}</h4>`
 }
