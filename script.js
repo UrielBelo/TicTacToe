@@ -164,3 +164,19 @@ function restartGame(winner){
         render(index)
     })
 }
+
+//INTELIGÊNCIA ARTIFICIAL
+
+const IA = {
+    block1: 1,
+    block2: 1,
+    block3: 1,
+    block4: 1,
+    block5: 1,
+    block6: 1,
+    block7: 1,
+    block8: 1,
+    block9: 1,
+
+    
+}
