@@ -17,9 +17,39 @@
         h2{
             text-align: center;
             margin-top: 5vh;
-            font-size: 48px;
+            font-size: 2.5em;
             margin-bottom: 2vh;
             font-family: 'Josefin Sans', sans-serif;
+        }
+        h3{
+            position: absolute;
+            font-size: 6em;
+            width: 100vw;
+            text-align: center;
+            font-family: 'Josefin Sans', sans-serif;
+            margin-top: calc(50vh - 5vh + 0.5em);
+        }
+        .empty{
+            animation-name: toBig;
+            animation-duration: 2s;
+            animation-timing-function: linear;
+            animation-fill-mode: initial;
+            animation-iteration-count: initial;
+        }
+        .showOut{
+            animation-name: showOut;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            animation-fill-mode: initial;
+            animation-iteration-count: initial;
+        }
+        .canBlur{
+            width: 100vw;
+            animation-name: blurAll;
+            animation-duration: 2s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: initial;
+            animation-iteration-count: initial;
         }
         #pageBody{
             height: 100%;
@@ -54,20 +84,84 @@
             border-radius: 15px;
         }
         .score h4{
-            font-size: 64px;
+            font-size: 3em;
             margin-left: 1.5vw;
             font-family: 'Roboto', sans-serif;
+        }
+        #c{ 
+            fill: transparent;
+            stroke: red;
+            stroke-width: 4px;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 0;
+            animation-name: drawC;
+            animation-duration: 0.5s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: initial;
+            animation-iteration-count: initial;
+        }
+        #x{
+            fill: transparent;
+            stroke: blue;
+            stroke-width: 4px;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 0;
+            animation-name: drawC;
+            animation-duration: 1.5s;
+            animation-timing-function: ease-out;
+            animation-fill-mode: initial;
+            animation-iteration-count: initial;
+        }
+        @keyframes drawC {
+            0%{
+                stroke-dashoffset: 100;
+            }
+            100%{
+                stroke-dashoffset: 0;
+            }
+        }
+        @keyframes toBig{
+            0%{
+                transform: scale(0.3);
+            }
+            100%{
+                transform: scale(1);
+            }
+        }
+        @keyframes blurAll{
+            0%{
+                filter: blur(1px);
+            }
+            50%{
+                filter: blur(5px);
+            }
+            100%{
+                filter: blur(0px);
+            }
+        }
+        @keyframes showOut {
+            0%{
+                opacity: 1;
+                transform: scale(1);
+            }
+            100%{
+                opacity: 0;
+                transform: scale(0.05);
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Jogo da Velha</h2>
-    <div id="placar">
-        <div id="circlePoints" class="score"></div>
-        <div id="xPoints" class="score"></div>
-    </div>
-    <div id="pageBody">
-        <div id="gameWindow"></div>
+    <h3 id="empty">EMPATE!!</h3>
+    <div id="canBlur">
+        <h2>Jogo da Velha</h2>
+        <div id="placar">
+            <div id="circlePoints" class="score"></div>
+            <div id="xPoints" class="score"></div>
+        </div>
+        <div id="pageBody">
+            <div id="gameWindow"></div>
+        </div>
     </div>
     <script src="./script.js"></script>
 </body>

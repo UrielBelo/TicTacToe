@@ -1,6 +1,10 @@
 const $gameWindow = document.getElementById('gameWindow')
 const $circleScore = document.getElementById('circlePoints')
 const $xScore = document.getElementById('xPoints')
+const $canBlur = document.getElementById('canBlur')
+const $empty = document.getElementById('empty')
+
+$empty.style.display = 'none'
 
 const borderStroke = 2
 const bs = borderStroke
@@ -15,18 +19,20 @@ const winForms = [
     [1,5,9],[3,5,7]
 ]
 const xFigure = `
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="blue" viewBox="0 0 16 16">
-    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" id="x">
+    <line x1="15" y1="15" x2="49" y2="49"/>
+    <line x1="15" y1="49" x2="49" y2="15"/>
 </svg>
 `
 const cFigure = `
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="red" viewBox="0 0 16 16">
-  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" id="c">
+    <path d="M16,32a16,16 0 1,0 32,0a16,16 0 1,0 -32,0"/>
 </svg>
 `
 const lBlocks = []
 
 let currentTurn = 'x'
+$xScore.style.backgroundColor = '#AFA'
 let circlePoints = 0
 let xPoints = 0
 
@@ -58,11 +64,15 @@ function click(blockID){
 
         if(currentTurn == 'x'){
             currentTurn = 'c'
+            $xScore.style.backgroundColor = '#EEE'
+            $circleScore.style.backgroundColor = '#AFA'
         }else if(currentTurn == 'c'){
             currentTurn = 'x'
+            $xScore.style.backgroundColor = '#AFA'
+            $circleScore.style.backgroundColor = '#EEE'
         }
 
-        render()
+        render(blockID)
         var winner = checkWin(['x','c'])
         if(winner != undefined){
             if(winner == 'c'){
@@ -71,27 +81,27 @@ function click(blockID){
                 xPoints++
             }
             updatePlacar()
+            restartGame(winner)
         }
     }
 }
-function render(){
-    lBlocks.forEach( (block,index) => {
-        const el = document.getElementById(`block${index}`)
+function render(blockID){
+        const el = document.getElementById(`block${blockID}`)
         var currentFigure
 
-        if(block.mark == 'x'){
+        if(lBlocks[blockID].mark == 'x'){
             currentFigure = xFigure
-        }else if(block.mark == 'c'){
+        }else if(lBlocks[blockID].mark == 'c'){
             currentFigure = cFigure
         }else{
             currentFigure = ''
         }
 
         el.innerHTML = currentFigure
-    })
 }
 function checkWin(player){
     var winner
+    var markCounter = 0
     player.forEach( (play) => {
         var counter = 0
         var win = false
@@ -109,6 +119,26 @@ function checkWin(player){
             winner = play
         }
     })
+    lBlocks.forEach( (block) => {
+        if(block.mark != ''){
+            markCounter++
+        }
+    })
+    if(markCounter == 9){
+        restartGame('x')
+        $canBlur.classList.add('canBlur')
+        $empty.style.display = 'block'
+        $empty.classList.add('empty')
+        setTimeout( () => {
+            $canBlur.classList.remove('canBlur')
+            $empty.classList.remove('empty')
+            $empty.classList.add('showOut')
+            setTimeout( () => {
+                $empty.classList.remove('showOut')
+                $empty.style.display = 'none'
+            },1000)
+        },2000)
+    }
     return winner
 }
 function updatePlacar(){
@@ -116,4 +146,21 @@ function updatePlacar(){
     $xScore.innerHTML = ''
     $circleScore.innerHTML = cFigure + `<h4>${circlePoints}</h4>`
     $xScore.innerHTML = xFigure + `<h4>${xPoints}</h4>`
+}
+function restartGame(winner){
+    currentTurn == winner
+    if(currentTurn == 'x'){
+        $xScore.style.backgroundColor = '#AFA'
+        $circleScore.style.backgroundColor = '#EEE'
+    }else if(currentTurn == 'c'){
+        $xScore.style.backgroundColor = '#EEE'
+        $circleScore.style.backgroundColor = '#AFA'
+    }
+    lBlocks.forEach( (block) => {
+        block.checked = false
+        block.mark = ''
+    })
+    lBlocks.forEach( (block,index) => {
+        render(index)
+    })
 }
