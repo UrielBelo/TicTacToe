@@ -8,7 +8,8 @@ const gameLayout = [
     [bs,bs,00,00],[bs,bs,00,bs],[bs,00,00,bs]
 ]
 const winForms = [
-    [1,4,7],[2,5,8],[3,6,9]
+    [1,4,7],[2,5,8],[3,6,9],
+    [1,2,3],[4,5,6],[7,8,9]
 ]
 const xFigure = `
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="blue" viewBox="0 0 16 16">
