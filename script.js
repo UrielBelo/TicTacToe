@@ -82,8 +82,10 @@ function click(blockID){
             }
             updatePlacar()
             restartGame(winner)
+            return 1
         }
     }
+    return 0
 }
 function render(blockID){
         const el = document.getElementById(`block${blockID}`)
@@ -167,11 +169,164 @@ function restartGame(winner){
 
 //INTELIGÊNCIA ARTIFICIAL
 
-const IA = {
+class IA{
     //1 = null
-    //2 = x
-    //3 = o
-    block1: 1, block2: 1, block3: 1,
-    block4: 1, block5: 1, block6: 1,
-    block7: 1, block8: 1, block9: 1,
+    //2 = me
+    //3 = ct
+    constructor(player){
+        this.play = player
+    }
+    b = []
+    f = new Array(9)
+    v = []
+
+    n1 = 0; n2 = 0; n3 = 0;
+    n4 = 0; n5 = 0; n6 = 0;
+    n7 = 0; n8 = 0; n9 = 0;
+
+    weights = []
+    setWeights() {
+        this.weights = []
+        for(var i=1; i <= 162; i++){
+            this.weights.push(getRandomIntInclusive(-500,500))
+        }
+    }
+    getPositions(){
+        for(var i = 0; i < 9; i++){
+            if(lBlocks[i].mark != ''){
+                this.b[i] = lBlocks[i].mark == this.play ? 2 : 3
+            }else{
+                this.b[i] = 1
+            }
+        }
+    }
+    think(){
+        this.v = []
+        this.f = [0,0,0,0,0,0,0,0,0]
+        this.b = []
+        for(var i = 1; i <= 9; i++){
+            this.n1 += this.b[i-1] * this.weights[i*9 -9]
+            this.n2 += this.b[i-1] * this.weights[i*9 -8]
+            this.n3 += this.b[i-1] * this.weights[i*9 -7]
+            this.n4 += this.b[i-1] * this.weights[i*9 -6]
+            this.n5 += this.b[i-1] * this.weights[i*9 -5]
+            this.n6 += this.b[i-1] * this.weights[i*9 -4]
+            this.n7 += this.b[i-1] * this.weights[i*9 -3]
+            this.n8 += this.b[i-1] * this.weights[i*9 -2]
+            this.n9 += this.b[i-1] * this.weights[i*9 -1]
+        }
+        this.n1 = this.n1 < 0 ? 0 : this.n1
+        this.n2 = this.n2 < 0 ? 0 : this.n2
+        this.n3 = this.n3 < 0 ? 0 : this.n3
+        this.n4 = this.n4 < 0 ? 0 : this.n4
+        this.n5 = this.n5 < 0 ? 0 : this.n5
+        this.n6 = this.n6 < 0 ? 0 : this.n6
+        this.n7 = this.n7 < 0 ? 0 : this.n7
+        this.n8 = this.n8 < 0 ? 0 : this.n8
+        this.n9 = this.n9 < 0 ? 0 : this.n9
+        this.f.fill(0)
+        for(var i = 1; i <= 9; i++){
+            this.f[i - 1] +=  this.n1 * this.weights[i*9 -9 + 81]
+            this.f[i - 1] +=  this.n2 * this.weights[i*9 -8 + 81]
+            this.f[i - 1] +=  this.n3 * this.weights[i*9 -7 + 81]
+            this.f[i - 1] +=  this.n4 * this.weights[i*9 -6 + 81]
+            this.f[i - 1] +=  this.n5 * this.weights[i*9 -5 + 81]
+            this.f[i - 1] +=  this.n6 * this.weights[i*9 -4 + 81]
+            this.f[i - 1] +=  this.n7 * this.weights[i*9 -3 + 81]
+            this.f[i - 1] +=  this.n8 * this.weights[i*9 -2 + 81]
+            this.f[i - 1] +=  this.n9 * this.weights[i*9 -1 + 81]
+        }
+        for(var i=0; i < 9; i++){
+            this.f[i] = this.f[i] < 0 ? 0 : this.f[i]
+            if(lBlocks[i].mark != ''){
+                this.f[i] = 0
+            }
+            if(this.f[i] != 0){
+                this.v.push(i)
+            }
+        } 
+        return this.v[getRandomIntInclusive(0,this.v.length - 1)]
+    }
+}
+
+var bestPlayerPoints = 0
+var bestPlayerWeights = []
+const bestPlayerHistory = []
+
+function startTrain(times){
+    var step = 0.2/times
+    const player1 = new IA('x')
+    const player2 = new IA('c')
+
+    player1.setWeights()
+    player2.setWeights()
+
+    for(var n = 0; n < times; n++){
+        console.log(`Teste ${n} de ${times}, melhor jogador: ${bestPlayerPoints}`)
+        for(var i=0; i<200; i++){
+    
+            var inGame = true
+    
+            while(inGame == true){
+                player1.getPositions()
+                if(click(player1.think()) == 1){
+                    inGame = false
+                }
+                player2.getPositions()
+                if(click(player2.think()) == 1){
+                    inGame = false
+                }
+            }     
+        }
+    
+        if(circlePoints > xPoints){
+            player2.weights.forEach( (weight,index) => {
+                weight = getRandomIntInclusive(bestPlayerWeights[index] * 0.8, bestPlayerWeights[index] * 1.2)
+            }) 
+            player1.setWeights()
+        }else{
+            player1.weights.forEach( (weight,index) => {
+                weight = getRandomIntInclusive(bestPlayerWeights[index] * 0.8, bestPlayerWeights[index] * 1.2)
+            }) 
+            player2.setWeights()
+        }
+        if(circlePoints > bestPlayerPoints){
+            bestPlayerPoints = circlePoints
+            bestPlayerWeights = player2.weights
+        }else if(xPoints > bestPlayerPoints){
+            bestPlayerPoints = xPoints
+            bestPlayerWeights = player1.weights 
+        }
+    
+        circlePoints = 0
+        xPoints = 0
+    }
+    return 0
+}
+
+
+function generateAPerfectIA(times,intraTimes){
+    for(var o = 0; o < times; o++){
+        console.clear()
+        console.log(`IA${o}`)
+        startTrain(intraTimes)
+
+        bestPlayerHistory.push({
+            GEN: o,
+            Points: bestPlayerPoints,
+            Weights: bestPlayerWeights
+        })
+
+        bestPlayerPoints = 0
+        bestPlayerWeights = []
+
+        console.log(bestPlayerHistory)
+    }
+    document.write(JSON.stringify(bestPlayerHistory))
+}
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
