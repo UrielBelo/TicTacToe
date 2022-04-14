@@ -173,8 +173,9 @@ class IA{
     //1 = null
     //2 = me
     //3 = ct
-    constructor(player){
+    constructor(player,ranger){
         this.play = player
+        this.range = ranger
     }
     b = []
     f = new Array(9)
@@ -188,7 +189,7 @@ class IA{
     setWeights() {
         this.weights = []
         for(var i=1; i <= 162; i++){
-            this.weights.push(getRandomIntInclusive(-500,500))
+            this.weights.push(getRandomIntInclusive(this.range * -1,this.range))
         }
     }
     getPositions(){
@@ -253,10 +254,10 @@ var bestPlayerPoints = 0
 var bestPlayerWeights = []
 const bestPlayerHistory = []
 
-function startTrain(times){
+function startTrain(times,range){
     var step = 0.2/times
-    const player1 = new IA('x')
-    const player2 = new IA('c')
+    const player1 = new IA('x',range)
+    const player2 = new IA('c',range)
 
     player1.setWeights()
     player2.setWeights()
@@ -305,11 +306,11 @@ function startTrain(times){
 }
 
 
-function generateAPerfectIA(times,intraTimes){
+function generateAPerfectIA(times,intraTimes,range){
     for(var o = 0; o < times; o++){
         console.clear()
         console.log(`IA${o}`)
-        startTrain(intraTimes)
+        startTrain(intraTimes,range)
 
         bestPlayerHistory.push({
             GEN: o,
